@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Result - BMI and Calories</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+        h1 {
+            background-color: #4CAF50;
+            color: white;
+            padding: 20px;
+            margin: 0;
+            text-align: center;
+        }
+        .result-container {
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .result-container p {
+            font-size: 16px;
+            line-height: 1.6;
+        }
+        .important {
+            font-weight: bold;
+            color: #4CAF50;
+        }
+        .note {
+            color: #FF5722;
+        }
+        .workout-button {
+            display: block;
+            width: 100%;
+            background-color: #009688;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-size: 1.2rem;
+            border-radius: 8px;
+            border: none;
+            margin-top: 20px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        .workout-button:hover {
+            background-color: #00796b;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+
+<h1>Your BMI and Calories Result</h1>
+
+<div class="result-container">
+    <p><span class="important">BMI:</span> <span id="bmi"></span></p>
+    <p><span class="important">BMI Category:</span> <span id="category"></span></p>
+    <p><span class="important">Calories to Maintain:</span> <span id="calories"></span> kcal</p>
+    <p><span class="important">Ideal Weight:</span> <span id="ideal_weight"></span> kg</p>
+    <p><span class="important">Protein Intake:</span> <span id="protein_grams"></span> grams/day</p>
+    <p><span class="important">Carbs Intake:</span> <span id="carbs_grams"></span> grams/day</p>
+    <p><span class="important">Fat Intake:</span> <span id="fats_grams"></span> grams/day</p>
+    <p><span class="note">Note:</span> <span id="goal_message"></span></p>
+
+    <!-- Workout Plan Button -->
+    <a href="workout-selection.html">
+        <button class="workout-button">Get Your Workout Plan</button>
+    </a>
+</div>
+
+<script>
+    // Retrieve the data from sessionStorage
+    document.getElementById('bmi').innerText = sessionStorage.getItem("bmi");
+    document.getElementById('category').innerText = sessionStorage.getItem("category");
+    document.getElementById('calories').innerText = sessionStorage.getItem("calories");
+    document.getElementById('ideal_weight').innerText = sessionStorage.getItem("ideal_weight");
+    document.getElementById('protein_grams').innerText = sessionStorage.getItem("protein_grams");
+    document.getElementById('carbs_grams').innerText = sessionStorage.getItem("carbs_grams");
+    document.getElementById('fats_grams').innerText = sessionStorage.getItem("fats_grams");
+    document.getElementById('goal_message').innerText = sessionStorage.getItem("goal_message");
+</script>
+
+</body>
+</html>

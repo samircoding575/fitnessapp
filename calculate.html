@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BMI and Calories Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+        h1 {
+            background-color: #4CAF50;
+            color: white;
+            padding: 20px;
+            margin: 0;
+        }
+        form {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            margin: 30px auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        td {
+            padding: 10px;
+        }
+        input, select, button {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        td:first-child {
+            text-align: right;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<h1>BMI and Calories Calculator</h1>
+
+<form id="bmiForm">
+    <table>
+        <tr>
+            <td>Weight (kg):</td>
+            <td><input type="number" step="0.1" id="weight" required></td>
+        </tr>
+        <tr>
+            <td>Height (cm):</td>
+            <td><input type="number" step="0.1" id="height" required></td>
+        </tr>
+        <tr>
+            <td>Age:</td>
+            <td><input type="number" id="age" required></td>
+        </tr>
+        <tr>
+            <td>Gender:</td>
+            <td>
+                <select id="gender">
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>Activity Level:</td>
+            <td>
+                <select id="activity_level">
+                    <option value="none">None</option>
+                    <option value="light">Light</option>
+                    <option value="moderate">Moderate</option>
+                    <option value="intense">Intense</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <button type="button" onclick="calculate()">Calculate</button>
+            </td>
+        </tr>
+    </table>
+</form>
+
+<script>
+    function calculate() {
+        const weight = parseFloat(document.getElementById('weight').value);
+        const height = parseFloat(document.getElementById('height').value) / 100; // convert cm to meters
+        const age = parseInt(document.getElementById('age').value);
+        const gender = document.getElementById('gender').value;
+        const activity_level = document.getElementById('activity_level').value;
+
+        if (!weight || !height || !age || !gender || !activity_level) {
+            alert("Please fill in all fields.");
+            return;
+        }
+
+        // BMI calculation
+        const bmi = weight / (height * height);
+
+        // BMR calculation
+        let bmr;
+        if (gender === 'male') {
+            bmr = 88.362 + (13.397 * weight) + (4.799 * height * 100) - (5.677 * age);
+        } else {
+            bmr = 447.593 + (9.247 * weight) + (3.098 * height * 100) - (4.330 * age);
+        }
+
+        // Adjust BMR based on activity level
+        let calories;
+        if (activity_level === 'light') {
+            calories = bmr * 1.375;
+        } else if (activity_level === 'moderate') {
+            calories = bmr * 1.55;
+        } else if (activity_level === 'intense') {
+            calories = bmr * 1.725;
+        } else {
+            calories = bmr * 1.2;
+        }
+
+        // BMI Category
+        let category;
+        let ideal_weight, calories_to_gain, calories_to_lose;
+        if (bmi < 18.5) {
+            category = "Underweight";
+            ideal_weight = 18.5 * (height * height);
+            calories_to_gain = 500;
+        } else if (bmi >= 18.5 && bmi < 24.9) {
+            category = "Normal weight";
+            ideal_weight = weight;
+            calories_to_gain = 0;
+        } else if (bmi >= 25 && bmi < 29.9) {
+            category = "Overweight";
+            ideal_weight = 24.9 * (height * height);
+            calories_to_lose = 500;
+        } else {
+            category = "Obese";
+            ideal_weight = 24.9 * (height * height);
+            calories_to_lose = 1000;
+        }
+
+        // Macronutrients
+        const protein_ratio = 0.2;
+        const carbs_ratio = 0.5;
+        const fats_ratio = 0.3;
+
+        const protein_grams = (calories * protein_ratio) / 4;
+        const carbs_grams = (calories * carbs_ratio) / 4;
+        const fats_grams = (calories * fats_ratio) / 9;
+
+        let goal_message;
+        if (category === "Obese" || category === "Overweight") {
+            const weight_diff = weight - ideal_weight;
+            const weeks_to_lose = Math.ceil(weight_diff / 0.5);
+            goal_message = `You need to lose about ${weight_diff.toFixed(2)} kg. It will take approximately ${weeks_to_lose} weeks to reach your ideal weight.`;
+        } else if (category === "Underweight") {
+            const weight_diff = ideal_weight - weight;
+            const weeks_to_gain = Math.ceil(weight_diff / 0.5);
+            goal_message = `You need to gain about ${weight_diff.toFixed(2)} kg. It will take approximately ${weeks_to_gain} weeks to reach your ideal weight.`;
+        } else {
+            goal_message = "You are at your ideal weight. Continue maintaining a healthy lifestyle.";
+        }
+
+        // Save the result data in sessionStorage to access it on the result page
+        sessionStorage.setItem("bmi", bmi.toFixed(2));
+        sessionStorage.setItem("category", category);
+        sessionStorage.setItem("calories", calories.toFixed(0));
+        sessionStorage.setItem("ideal_weight", ideal_weight.toFixed(2));
+        sessionStorage.setItem("protein_grams", protein_grams.toFixed(2));
+        sessionStorage.setItem("carbs_grams", carbs_grams.toFixed(2));
+        sessionStorage.setItem("fats_grams", fats_grams.toFixed(2));
+        sessionStorage.setItem("goal_message", goal_message);
+
+        // Redirect to the result page
+        window.location.href = "result.html";
+    }
+</script>
+
+</body>
+</html>
+

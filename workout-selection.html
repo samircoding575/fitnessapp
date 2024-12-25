@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workout Selection</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        body {
+            background-color: #f4f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 0;
+            font-size: 16px;
+        }
+
+        #header {
+            background: #009688;
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #header .logo {
+            width: 120px;
+        }
+
+        #navbar {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+        }
+
+        #navbar li a {
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+
+        #navbar li a:hover {
+            color: #ffd700;
+        }
+
+        #workout-selection {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 40px;
+            background-color: #fff;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+        }
+
+        #workout-selection h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        label {
+            font-size: 1.1rem;
+            color: #333;
+        }
+
+        select, input[type="number"] {
+            padding: 12px;
+            font-size: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            width: 100%;
+            margin-top: 8px;
+        }
+
+        .calculate-button {
+            background-color: #009688;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            align-self: center;
+        }
+
+        .calculate-button:hover {
+            background-color: #00796b;
+            transform: scale(1.05);
+        }
+
+        #program-output {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #ecf0f1;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #program-output p {
+            font-size: 1.1rem;
+            color: #333;
+        }
+
+        @media (max-width: 768px) {
+            #workout-selection {
+                padding: 20px;
+            }
+
+            #workout-selection h2 {
+                font-size: 2rem;
+            }
+
+            .calculate-button {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <section id="header">
+        <a href="#">
+            <img src="images.jpg" class="logo" alt="Logo">
+        </a>
+        <div>
+            <ul id="navbar">
+                <li><a class="active" href="index.html">Home</a></li>
+              
+            </ul>
+        </div>
+    </section>
+
+    <section id="workout-selection">
+        <h2>Select Your Workout and Calculate Calories Burned</h2>
+        <form id="workout-form">
+            <label for="intensity">Workout Intensity:</label>
+            <select id="intensity" name="intensity">
+                <option value="intense">Intense</option>
+                <option value="light">Light</option>
+            </select>
+
+            <label for="workout-type">Select Workout Type:</label>
+            <select id="workout-type" name="workout-type">
+                <option value="running">Running</option>
+                <option value="swimming">Swimming</option>
+                <option value="walking">Walking</option>
+                <option value="jumping-rope">Jumping Rope</option>
+                <option value="lifting-weights">Lifting Weights</option>
+            </select>
+
+            <label for="duration">Duration (minutes):</label>
+            <input type="number" id="duration" name="duration" required min="1">
+
+            <label for="bmi">Enter Your BMI:</label>
+            <input type="number" id="bmi" name="bmi" step="0.1" required>
+
+            <button type="submit" class="calculate-button">Get Workout Plan & Calories Burned</button>
+        </form>
+
+        <div id="program-output">
+            <!-- The workout plan and calories burned will be displayed here -->
+        </div>
+    </section>
+
+    <script>
+        const form = document.getElementById('workout-form');
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const intensity = document.getElementById('intensity').value;
+            const workoutType = document.getElementById('workout-type').value;
+            const duration = parseInt(document.getElementById('duration').value);
+            const bmi = parseFloat(document.getElementById('bmi').value);
+            let program = '';
+            let caloriesBurned = 0;
+
+            // Define calories burned per minute for each workout type
+            const caloriesPerMinute = {
+                running: { light: 8, intense: 12 },      // calories burned per minute for light and intense
+                swimming: { light: 7, intense: 11 },
+                walking: { light: 3, intense: 5 },
+                jumpingRope: { light: 10, intense: 15 },
+                liftingWeights: { light: 6, intense: 9 }
+            };
+
+            if (bmi < 18.5) {
+                program = 'You are underweight. Please consult a doctor before starting any workout.';
+            } else if (bmi >= 18.5 && bmi <= 24.9) {
+                program = `Your BMI is healthy. Choose an activity to burn calories and improve your fitness.`;
+            } else if (bmi >= 25) {
+                program = `Your BMI indicates overweight. You can use the following program to lose weight.`;
+            } else {
+                program = 'Invalid BMI. Please enter a valid number.';
+            }
+
+            // Calculate calories burned based on selected workout and intensity
+            if (caloriesPerMinute[workoutType]) {
+                caloriesBurned = caloriesPerMinute[workoutType][intensity] * duration;
+            }
+
+            const totalProgram = `
+                <p>${program}</p>
+                <p>Selected Workout: ${workoutType.charAt(0).toUpperCase() + workoutType.slice(1)}</p>
+                <p>Intensity: ${intensity.charAt(0).toUpperCase() + intensity.slice(1)}</p>
+                <p>Duration: ${duration} minutes</p>
+                <p>Total Calories Burned: ${caloriesBurned} calories</p>
+            `;
+
+            document.getElementById('program-output').innerHTML = totalProgram;
+        });
+    </script>
+
+</body>
+</html>
